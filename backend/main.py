@@ -7,6 +7,7 @@ from fastapi.staticfiles import StaticFiles
 from db import get_system_session
 from modules.q1_q3.routes import router as q1_q3_router
 from modules.q4_q6.routes import router as q4_q6_router
+from modules.q7_q9.routes import router as q7_q9_router
 
 
 app = FastAPI(title="Hotel Management API", version="1.0.0")
@@ -21,6 +22,7 @@ app.add_middleware(
 # Mỗi thành viên đăng ký router của module mình tại đây.
 app.include_router(q1_q3_router)
 app.include_router(q4_q6_router)
+app.include_router(q7_q9_router)
 
 
 @app.get("/health/cassandra", tags=["System"])
