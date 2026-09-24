@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Hotel Query Dashboard</title>
+  <style>
+    :root { color-scheme: light; --navy:#14213d; --blue:#3157d5; --paper:#f4f6fb; --line:#dfe4ef; --muted:#667085; }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family:Inter,ui-sans-serif,system-ui,-apple-system,sans-serif; color:#172033; background:var(--paper); }
+    .shell { min-height:100vh; display:grid; grid-template-columns:280px 1fr; }
+    aside { background:var(--navy); color:#fff; padding:28px 20px; display:flex; flex-direction:column; }
+    .brand { padding:0 10px 24px; border-bottom:1px solid rgba(255,255,255,.12); }
+    .brand strong { display:block; font-size:1.12rem; }
+    .brand span { display:block; color:#aeb9d3; margin-top:5px; font-size:.78rem; }
+    nav { padding-top:20px; display:grid; gap:7px; }
+    .tab { width:100%; border:0; border-radius:9px; padding:11px 12px; background:transparent; color:#cdd5e7; text-align:left; cursor:pointer; font:inherit; display:flex; gap:10px; align-items:center; }
+    .tab .num { width:29px; height:29px; border-radius:8px; display:grid; place-items:center; background:rgba(255,255,255,.08); font-weight:700; font-size:.82rem; }
+    .tab:hover:not(:disabled), .tab.active { background:#fff; color:var(--navy); }
+    .tab.active .num { background:var(--blue); color:#fff; }
+    .tab:disabled { cursor:not-allowed; opacity:.4; }
+    .owner { margin-top:auto; padding:18px 10px 0; color:#aeb9d3; font-size:.75rem; line-height:1.55; }
+    main { min-width:0; display:flex; flex-direction:column; }
+    header { min-height:76px; background:#fff; border-bottom:1px solid var(--line); display:flex; align-items:center; justify-content:space-between; padding:16px 28px; }
+    header h1 { font-size:1.08rem; margin:0; }
+    header p { color:var(--muted); font-size:.8rem; margin:4px 0 0; }
+    .status { color:#08783e; background:#e8f7ef; border-radius:999px; padding:7px 11px; font-size:.76rem; font-weight:650; }
+    iframe { width:100%; flex:1; min-height:calc(100vh - 77px); border:0; background:var(--paper); }
+    @media (max-width:760px) {
+      .shell { grid-template-columns:1fr; }
+      aside { padding:15px; }
+      .brand, .owner { display:none; }
+      nav { padding:0; grid-template-columns:repeat(3,1fr); }
+      .tab { justify-content:center; padding:8px; }
+      .tab span:last-child { display:none; }
+      header { padding:14px 18px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside>
+      <div class="brand">
+        <strong>Hotel Cassandra</strong>
+        <span>9 query · 3 module độc lập</span>
+      </div>
+      <nav aria-label="Danh sách query">
+        <button class="tab" disabled><span class="num">Q1</span><span>Chưa triển khai</span></button>
+        <button class="tab" disabled><span class="num">Q2</span><span>Chưa triển khai</span></button>
+        <button class="tab" disabled><span class="num">Q3</span><span>Chưa triển khai</span></button>
+        <button class="tab active" data-page="q4.html" data-title="Q4 · Tìm phòng trống"><span class="num">Q4</span><span>Tìm phòng trống</span></button>
+        <button class="tab" data-page="q5.html" data-title="Q5 · Lịch đặt phòng"><span class="num">Q5</span><span>Lịch đặt phòng</span></button>
+        <button class="tab" data-page="q6.html" data-title="Q6 · Tra cứu booking"><span class="num">Q6</span><span>Tra cứu booking</span></button>
+        <button class="tab" disabled><span class="num">Q7</span><span>Chưa triển khai</span></button>
+        <button class="tab" disabled><span class="num">Q8</span><span>Chưa triển khai</span></button>
+        <button class="tab" disabled><span class="num">Q9</span><span>Chưa triển khai</span></button>
+      </nav>
+      <div class="owner">Q4–Q6 là module mẫu. Mỗi query được tách thành một trang HTML độc lập.</div>
+    </aside>
+    <main>
+      <header>
+        <div><h1 id="pageTitle">Q4 · Tìm phòng trống</h1><p>Mỗi tab chỉ hiển thị giao diện của một query.</p></div>
+        <span class="status">Cassandra module</span>
+      </header>
+      <iframe id="queryFrame" src="q4.html" title="Q4 · Tìm phòng trống"></iframe>
+    </main>
+  </div>
+  <script>
+    const frame = document.querySelector('#queryFrame');
+    const title = document.querySelector('#pageTitle');
+    document.querySelectorAll('.tab[data-page]').forEach(button => {
+      button.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(item => item.classList.remove('active'));
+        button.classList.add('active');
+        frame.src = button.dataset.page;
+        frame.title = button.dataset.title;
+        title.textContent = button.dataset.title;
+      });
+    });
+  </script>
+</body>
+</html>

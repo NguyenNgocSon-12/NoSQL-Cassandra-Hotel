@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Q4 · Tìm phòng trống</title>
+  <style>
+    *{box-sizing:border-box} body{margin:0;padding:34px;font-family:Inter,system-ui,sans-serif;color:#172033;background:#f4f6fb} .wrap{max-width:980px;margin:auto}
+    .eyebrow{color:#3157d5;font-weight:750;font-size:.78rem;letter-spacing:.08em} h2{margin:7px 0;font-size:1.65rem} .lead{margin:0 0 24px;color:#667085}
+    .card{background:#fff;border:1px solid #dfe4ef;border-radius:14px;padding:22px;box-shadow:0 8px 28px rgba(25,40,75,.06)} form{display:grid;grid-template-columns:1fr 1fr auto;gap:14px;align-items:end}
+    label{display:grid;gap:7px;font-size:.8rem;font-weight:650;color:#475467} input,select{width:100%;padding:11px 12px;border:1px solid #cfd6e4;border-radius:8px;font:inherit;background:#fff} button{border:0;border-radius:8px;padding:12px 18px;background:#3157d5;color:#fff;font-weight:700;cursor:pointer}
+    .result{margin-top:22px}.note{color:#667085;font-size:.85rem}.error{color:#b42318;background:#fef3f2;padding:12px;border-radius:8px} table{width:100%;border-collapse:collapse;font-size:.88rem} th,td{padding:12px 10px;border-bottom:1px solid #eaecf0;text-align:left} th{color:#667085;font-size:.76rem}.price{font-weight:700;color:#08783e}
+    @media(max-width:680px){body{padding:20px}form{grid-template-columns:1fr}table{display:block;overflow:auto}}
+  </style>
+</head>
+<body><div class="wrap">
+  <div class="eyebrow">QUERY 4</div><h2>Tìm phòng trống</h2><p class="lead">Chọn khách sạn và ngày lưu trú để xem những phòng còn khả dụng.</p>
+  <div class="card">
+    <form id="form">
+      <label>Khách sạn<select id="hotel"><option value="H001">H001 · Lotus Riverside</option><option value="H002">H002 · Saigon Central</option></select></label>
+      <label>Ngày lưu trú<input id="date" type="date" value="2026-09-25" required></label>
+      <button type="submit">Tìm phòng</button>
+    </form>
+    <div id="result" class="result"><p class="note">Dữ liệu mẫu: H001 hoặc H002, ngày 25–26/09/2026.</p></div>
+  </div>
+</div><script>
+const result=document.querySelector('#result');
+const money=value=>new Intl.NumberFormat('vi-VN',{style:'currency',currency:'VND'}).format(value);
+document.querySelector('#form').addEventListener('submit',async event=>{event.preventDefault();result.innerHTML='<p class="note">Đang tải…</p>';
+  const params=new URLSearchParams({hotel_id:document.querySelector('#hotel').value,stay_date:document.querySelector('#date').value});
+  try{const response=await fetch('/api/q4/available-rooms?'+params);if(!response.ok)throw new Error((await response.json()).detail||'Không thể tải dữ liệu');const rows=await response.json();
+    if(!rows.length){result.innerHTML='<p class="note">Không có phòng trống trong ngày đã chọn.</p>';return}
+    result.innerHTML=`<table><thead><tr><th>Phòng</th><th>Loại phòng</th><th>Ngày</th><th>Giá/đêm</th><th>Room ID</th></tr></thead><tbody>${rows.map(r=>`<tr><td><strong>${r.room_number}</strong></td><td>${r.room_type}</td><td>${r.stay_date}</td><td class="price">${money(r.price)}</td><td>${r.room_id}</td></tr>`).join('')}</tbody></table>`;
+  }catch(error){result.innerHTML=`<div class="error">${error.message}</div>`}
+});
+</script></body></html>
