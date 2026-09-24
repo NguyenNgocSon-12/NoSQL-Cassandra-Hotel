@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from db import get_system_session
+from modules.q1_q3.routes import router as q1_q3_router
 from modules.q4_q6.routes import router as q4_q6_router
 
 
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 
 # Mỗi thành viên đăng ký router của module mình tại đây.
+app.include_router(q1_q3_router)
 app.include_router(q4_q6_router)
 
 

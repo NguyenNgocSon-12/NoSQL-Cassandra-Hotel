@@ -4,7 +4,7 @@ Project được tổ chức cho **3 thành viên**, mỗi người phụ trách
 Mục tiêu là hạn chế sửa chung file, dễ merge trên GitHub và dễ xác định lỗi thuộc
 module nào.
 
-Hiện project đã có module mẫu **Q4–Q6**. Q1–Q3 và Q7–Q9 chưa triển khai.
+Hiện project đã có hai module **Q1–Q3** và **Q4–Q6**. Q7–Q9 chưa triển khai.
 
 ## 1. Cấu trúc project
 
@@ -16,12 +16,13 @@ hotel-app/
 │   ├── .env.example
 │   ├── requirements.txt
 │   └── modules/
-│       └── q4_q6/                 # module của người phụ trách Q4–Q6
-│           ├── routes.py          # API/backend riêng
-│           ├── schema.cql         # 3 bảng của Q4–Q6
-│           └── seed.cql           # dữ liệu mẫu của Q4–Q6
+│       ├── q1_q3/                 # schema, seed và API riêng của Q1–Q3
+│       └── q4_q6/                 # schema, seed và API riêng của Q4–Q6
 ├── frontend/
 │   ├── index.html                 # dashboard chứa các tab Q1–Q9
+│   ├── q1.html                    # mỗi file chỉ chứa giao diện một query
+│   ├── q2.html
+│   ├── q3.html
 │   ├── q4.html                    # chỉ chứa giao diện Q4
 │   ├── q5.html                    # chỉ chứa giao diện Q5
 │   └── q6.html                    # chỉ chứa giao diện Q6
@@ -119,7 +120,29 @@ Truy cập:
 - Swagger: `http://localhost:8000/docs`
 - Cassandra health check: `http://localhost:8000/health/cassandra`
 
-## 5. API Q4–Q6
+## 5. API Q1–Q6
+
+### Q1 — Tìm khách sạn theo khu vực hoặc địa điểm
+
+```http
+GET /api/q1/hotels?location=Quận%201%2C%20TP.HCM
+```
+
+Địa điểm seed: `Quận 1, TP.HCM`, `Đà Lạt`, `Gần Chợ Bến Thành`.
+
+### Q2 — Tìm phòng theo khách sạn và loại phòng
+
+```http
+GET /api/q2/rooms?hotel_id=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaa001&room_type=Deluxe
+```
+
+Module có dữ liệu mẫu cho các loại `Deluxe`, `Suite` và `Bungalow`.
+
+### Q3 — Xem tiện ích của một phòng
+
+```http
+GET /api/q3/room-amenities?hotel_id=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaa001&room_id=bbbbbbbb-bbbb-4bbb-8bbb-bbbbbbbbb101
+```
 
 ### Q4 — Tìm phòng trống theo khách sạn và ngày
 
@@ -146,37 +169,36 @@ GET /api/q6/reservations/CNF-Q456-001
 
 Mã seed có thể thử: `CNF-Q456-001`, `CNF-Q456-002`, `CNF-Q456-003`.
 
-## 6. Frontend Q4–Q6
+## 6. Frontend Q1–Q6
 
 `frontend/index.html` chỉ làm nhiệm vụ dashboard và chuyển tab. Nội dung từng
 query nằm độc lập trong:
 
-- `frontend/q4.html`
-- `frontend/q5.html`
-- `frontend/q6.html`
+- `frontend/q1.html`, `frontend/q2.html`, `frontend/q3.html`
+- `frontend/q4.html`, `frontend/q5.html`, `frontend/q6.html`
 
 Các trang gọi API bằng đường dẫn tương đối `/api/...`, vì vậy không cần hardcode
 host hoặc port. Không đặt giao diện của hai query trong cùng một file.
 
 ## 7. Cách thêm module của thành viên khác
 
-Ví dụ người phụ trách Q1–Q3:
+Ví dụ người phụ trách Q7–Q9:
 
-1. Tạo `backend/modules/q1_q3/__init__.py`.
+1. Tạo `backend/modules/q7_q9/__init__.py`.
 2. Tạo `schema.cql`, `seed.cql`, `routes.py` trong thư mục đó.
 3. Trong `backend/main.py`, import router:
 
    ```python
-   from modules.q1_q3.routes import router as q1_q3_router
+   from modules.q7_q9.routes import router as q7_q9_router
    ```
 
 4. Đăng ký router:
 
    ```python
-   app.include_router(q1_q3_router)
+   app.include_router(q7_q9_router)
    ```
 
-5. Tạo `frontend/q1.html`, `q2.html`, `q3.html`.
+5. Tạo `frontend/q7.html`, `q8.html`, `q9.html`.
 6. Bật ba tab tương ứng trong `frontend/index.html`.
 7. Chạy `docker compose run --rm cassandra-init` rồi kiểm tra Swagger.
 
@@ -188,7 +210,7 @@ một file CQL chung.
 Mỗi thành viên dùng branch riêng, ví dụ:
 
 ```bash
-git switch -c feature/q4-q6
+git switch -c feature/q7-q9
 ```
 
 Chỉ commit file thuộc module và ba trang frontend mình sở hữu. Khi cần sửa

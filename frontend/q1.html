@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Q1 · Khách sạn theo địa điểm</title>
+  <style>
+    *{box-sizing:border-box}body{margin:0;padding:34px;font-family:Inter,system-ui,sans-serif;color:#172033;background:#f4f6fb}.wrap{max-width:1000px;margin:auto}.eyebrow{color:#176b87;font-weight:750;font-size:.78rem;letter-spacing:.08em}h2{margin:7px 0;font-size:1.65rem}.lead{margin:0 0 24px;color:#667085}.card{background:#fff;border:1px solid #dfe4ef;border-radius:14px;padding:22px;box-shadow:0 8px 28px rgba(25,40,75,.06)}form{display:grid;grid-template-columns:1fr auto;gap:14px;align-items:end}label{display:grid;gap:7px;font-size:.8rem;font-weight:650;color:#475467}select{width:100%;padding:11px 12px;border:1px solid #cfd6e4;border-radius:8px;font:inherit;background:#fff}button{border:0;border-radius:8px;padding:12px 18px;background:#176b87;color:#fff;font-weight:700;cursor:pointer}.result{margin-top:22px}.note{color:#667085;font-size:.85rem}.error{color:#b42318;background:#fef3f2;padding:12px;border-radius:8px}.hotels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.hotel{border:1px solid #e5e9f1;border-radius:11px;padding:17px}.hotel h3{margin:0 0 5px;font-size:1rem}.stars{color:#e49a14;font-size:.82rem}.meta{color:#667085;font-size:.8rem;line-height:1.55;margin:10px 0}.description{font-size:.86rem;line-height:1.55;margin:0}@media(max-width:680px){body{padding:20px}form,.hotels{grid-template-columns:1fr}}
+  </style>
+</head>
+<body><div class="wrap"><div class="eyebrow">QUERY 1</div><h2>Khách sạn theo khu vực hoặc địa điểm</h2><p class="lead">Đọc trực tiếp một partition theo khóa location.</p>
+<div class="card"><form id="form"><label>Địa điểm<select id="location"><option>Quận 1, TP.HCM</option><option>Đà Lạt</option><option>Gần Chợ Bến Thành</option></select></label><button type="submit">Tìm khách sạn</button></form><div id="result" class="result"><p class="note">Chọn địa điểm và nhấn tìm để xem dữ liệu mẫu.</p></div></div>
+</div><script>
+const result=document.querySelector('#result');
+document.querySelector('#form').addEventListener('submit',async event=>{event.preventDefault();result.innerHTML='<p class="note">Đang tải…</p>';const location=document.querySelector('#location').value;
+try{const response=await fetch('/api/q1/hotels?'+new URLSearchParams({location}));if(!response.ok)throw new Error((await response.json()).detail||'Không thể tải dữ liệu');const rows=await response.json();if(!rows.length){result.innerHTML='<p class="note">Không tìm thấy khách sạn tại địa điểm này.</p>';return}result.innerHTML=`<div class="hotels">${rows.map(h=>`<article class="hotel"><div class="stars">${'★'.repeat(h.star_rating)}${'☆'.repeat(5-h.star_rating)}</div><h3>${h.hotel_name}</h3><div class="meta">${h.address}<br>${h.phone}<br>ID: ${h.hotel_id}</div><p class="description">${h.description}</p></article>`).join('')}</div>`}catch(error){result.innerHTML=`<div class="error">${error.message}</div>`}});
+</script></body></html>
