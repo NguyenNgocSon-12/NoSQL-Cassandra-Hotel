@@ -4,7 +4,7 @@ Project được tổ chức cho **3 thành viên**, mỗi người phụ trách
 Mục tiêu là hạn chế sửa chung file, dễ merge trên GitHub và dễ xác định lỗi thuộc
 module nào.
 
-Hiện project đã có module mẫu **Q4–Q6**. Q1–Q3 và Q7–Q9 chưa triển khai.
+Hiện project đã có hai module **Q4–Q6** và **Q7–Q9**. Q1–Q3 chưa triển khai.
 
 ## 1. Cấu trúc project
 
@@ -16,15 +16,16 @@ hotel-app/
 │   ├── .env.example
 │   ├── requirements.txt
 │   └── modules/
-│       └── q4_q6/                 # module của người phụ trách Q4–Q6
-│           ├── routes.py          # API/backend riêng
-│           ├── schema.cql         # 3 bảng của Q4–Q6
-│           └── seed.cql           # dữ liệu mẫu của Q4–Q6
+│       ├── q4_q6/                 # schema, seed và API riêng của Q4–Q6
+│       └── q7_q9/                 # schema, seed và API riêng của Q7–Q9
 ├── frontend/
 │   ├── index.html                 # dashboard chứa các tab Q1–Q9
 │   ├── q4.html                    # chỉ chứa giao diện Q4
 │   ├── q5.html                    # chỉ chứa giao diện Q5
-│   └── q6.html                    # chỉ chứa giao diện Q6
+│   ├── q6.html                    # chỉ chứa giao diện Q6
+│   ├── q7.html                    # mỗi file chỉ chứa một query
+│   ├── q8.html
+│   └── q9.html
 └── compose.yml
 ```
 
@@ -119,7 +120,7 @@ Truy cập:
 - Swagger: `http://localhost:8000/docs`
 - Cassandra health check: `http://localhost:8000/health/cassandra`
 
-## 5. API Q4–Q6
+## 5. API Q4–Q9
 
 ### Q4 — Tìm phòng trống theo khách sạn và ngày
 
@@ -146,7 +147,32 @@ GET /api/q6/reservations/CNF-Q456-001
 
 Mã seed có thể thử: `CNF-Q456-001`, `CNF-Q456-002`, `CNF-Q456-003`.
 
-## 6. Frontend Q4–Q6
+### Q7 — Xem lịch sử đặt phòng của khách hàng
+
+```http
+GET /api/q7/guest-reservations?guest_id=cccccccc-cccc-4ccc-8ccc-ccccccccc001
+```
+
+Kết quả được sắp xếp theo `check_in DESC`. Guest ID mẫu kết thúc bằng `c001`,
+`c002` hoặc `c003`.
+
+### Q8 — Danh sách khách check-in theo khách sạn và ngày
+
+```http
+GET /api/q8/checkins?hotel_id=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaa001&check_in_date=2026-09-25
+```
+
+Ngày seed có dữ liệu: `2026-09-25` và `2026-10-02`.
+
+### Q9 — Danh sách khách check-out theo khách sạn và ngày
+
+```http
+GET /api/q9/checkouts?hotel_id=aaaaaaaa-aaaa-4aaa-8aaa-aaaaaaaaa001&check_out_date=2026-09-28
+```
+
+Ngày seed có dữ liệu: `2026-09-27`, `2026-09-28` và `2026-10-04`.
+
+## 6. Frontend Q4–Q9
 
 `frontend/index.html` chỉ làm nhiệm vụ dashboard và chuyển tab. Nội dung từng
 query nằm độc lập trong:
@@ -154,6 +180,9 @@ query nằm độc lập trong:
 - `frontend/q4.html`
 - `frontend/q5.html`
 - `frontend/q6.html`
+- `frontend/q7.html`
+- `frontend/q8.html`
+- `frontend/q9.html`
 
 Các trang gọi API bằng đường dẫn tương đối `/api/...`, vì vậy không cần hardcode
 host hoặc port. Không đặt giao diện của hai query trong cùng một file.
@@ -188,7 +217,7 @@ một file CQL chung.
 Mỗi thành viên dùng branch riêng, ví dụ:
 
 ```bash
-git switch -c feature/q4-q6
+git switch -c feature/q1-q3
 ```
 
 Chỉ commit file thuộc module và ba trang frontend mình sở hữu. Khi cần sửa
